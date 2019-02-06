@@ -1,0 +1,20 @@
+{
+  "name": "xmlreferancer",
+  "version": "1.0.0",
+  "description": "xml referance finder",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mert.demirok",
+  "license": "ISC",
+  "dependencies": {
+    "excel4node": "^1.7.0",
+    "express": "^4.16.4",
+    "fast-xml-parser": "^3.12.12",
+    "formidable": "^1.2.1",
+    "he": "^1.2.0",
+    "path": "^0.12.7",
+    "xml2js": "^0.4.19"
+  }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"  crossorigin="anonymous">
+    <script language="JavaScript" type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
+    <script language="JavaScript" type="text/javascript" src="/js/jquery-ui-personalized-1.5.2.packed.js"></script>
+    <script language="JavaScript" type="text/javascript" src="/js/sprinkle.js"></script>
+    <title>XMLReferancer</title>
+</head>
+<body>
+   
+    <div class="container">
+        <div class="container">
+            
+            <h1 class="display-6 text-center mb-6">Xml Referances Finder</h1>
+            
+            <div class="row mb-4">
+              <div class="col text-center">
+                <h3></h3>
+                <a href="#" class="btn btn-lg btn-success" data-toggle="modal" data-target="#largeModal">Export Excel</a>
+              </div>
+            </div>
+          
+          <!-- large modal -->
+          <div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="myModalLabel">insert xml file</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  
+                    <div class="col-12">
+                        <p class="text-justify">insert export file</p>                
+                          <label class="input-group-btn">
+                              <span class="btn btn-primary">
+                                  Browse&hellip; <input  id="xml-file" type="file" onchange="loadDoc(this)" style="display: none;" multiple>
+                              </span>
+                          </label>
+                        <span  id="status" class="help-block">
+                        
+                        </span>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <a type="button" class="btn btn-primary" href="../XmlReferanceFinder/ExportToExcel/Referances.xlsx" download>Export Excel</a>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    <script>
+
+      function loadDoc() {
+  var xhttp = new XMLHttpRequest();
+  let xml = document.getElementById("xml-file").files[0];  
+  let formData = new FormData();
+  formData.append("xml", xml);   
+ 
+  document.getElementById('status').style.display = "hide";
+  
+ xhttp.onreadystatechange = function() {
+
+  console.log(this.response ,this.responseText, this.responseType)
+    if (this.readyState == 4 && this.status == 200 ) {
+    
+      setInterval( function(){ document.getElementById('status').textContent = "Done"; } , 4000);
+  
+    }
+    
+  };
+  xhttp.open("POST", "/exportxml", true);
+  
+  xhttp.send(formData);
+
+ 
+ 
+}
+      </script>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+</body>
+</html>
