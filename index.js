@@ -2,6 +2,7 @@ const FXparser = require('fast-xml-parser');
 var fileRead = require('./readFile')
 var writeFile = require('./writeFile')
 var he = require('he');
+var index = require('./index');
 
 module.exports.runProcess = function runProcess(){
 
@@ -40,8 +41,8 @@ module.exports.runProcess = function runProcess(){
 }
 
 
-
-
+//for test function
+//index.runProcess();
 
 
 
