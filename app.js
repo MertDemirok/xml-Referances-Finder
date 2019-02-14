@@ -1,7 +1,7 @@
 var http = require('http');
 var fs = require('fs');
 var path = require('path');
-var index = require('./index');
+var excelExport = require('./Backend/runProcess');
 var formidable = require('formidable');
 
 http.createServer(function (request, response) {
@@ -13,19 +13,19 @@ http.createServer(function (request, response) {
     console.log( filePath )
     if (filePath == './')
         filePath = './index.html';
-    else if (filePath == './exportxml'){
+    else if (filePath == './ExportToExcel'){
         var form = new formidable.IncomingForm();
         form.parse(request, function (err, fields, files) {
           
             var oldpath = files.xml.path;
             
-           var newpath = '../XmlReferanceFinder/ImportXML/' + files.xml.name;
-          
+           var newpath = './ImportXML/' + files.xml.name;
+         
            fs.rename(oldpath, newpath, function (err) {
               if (err) throw err;
              // response.write(200, { 'Content-Type': contentType });
               console.log('File uploaded and moved!')
-              index.runProcess();
+              excelExport.runProcess("./ImportXML/ExportInfo","./ExportToExcel/Referances.xlsx");
              
             }); 
        });
