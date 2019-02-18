@@ -2,7 +2,9 @@ const FXparser = require('fast-xml-parser');
 var he = require('he');
 var writeFile = require('./writeControl');
 
-module.exports.xmlTransform = function xmlTransform(content,writePath) {
+
+
+module.exports.xmlTransform = function xmlTransform(content, eO) {
 
     var options = {
         attributeNamePrefix: "",
@@ -22,32 +24,24 @@ module.exports.xmlTransform = function xmlTransform(content,writePath) {
         tagValueProcessor: a => he.decode(a) //default is a=>a
     }
 
-    getExportInfoData(content, options,writePath);
-    
-
-
+      var exportData =  getExportInfoData(content, options, eO);
+      writeFile.writeFile(exportData, eO);
 }
 
-function getExportInfoData(cont, opt,wPath) {
+function getExportInfoData(cont, opt, excelOptions) {
     if (FXparser.validate(cont) === true) {
 
         var jsonObj = FXparser.parse(cont, opt);
-        var resultObject = xmlToJsonParsing(jsonObj);
+        var serviceType = excelOptions.serviceType;
+        var resultObject = xmlToJsonParsing(jsonObj,serviceType);
 
-        //sheet count ve new excel create için parametre eklenebılır.
-        var excelOptions = {
-            writePath: wPath,
-            sheetName : "RefSheet",
-            headers : ["Proxy Service Path", "References", "Reference Resource Type", "# BS invoked", "# PX invoked"],
-        }
-
-    
-        writeFile.writeFile(resultObject, excelOptions);
-        //success return ...
+      return resultObject;  
+     
     }
 }
 
-function xmlToJsonParsing(params) {
+
+function xmlToJsonParsing(params,type) {
 
     var items = params['xml-fragment']['imp:exportedItemInfo'];
 
@@ -55,7 +49,7 @@ function xmlToJsonParsing(params) {
     var counter = 0;
 
     items.forEach(function (item) {
-        if (item.attr.typeId === "ProxyService") {
+        if (item.attr.typeId ===  type) {
 
             var props = item['imp:properties']['imp:property'];
             var counter_p = 0;
@@ -63,7 +57,7 @@ function xmlToJsonParsing(params) {
             var xmlInfoData = { path: "", referances: [], resourceType: [], psCount: 0, bsCount: 0 }
 
             xmlInfoData.path = item.attr.instanceId;
-
+            
             props.forEach(function (prop) {
 
                 if (prop.attr.name === "extrefs") {
@@ -73,8 +67,7 @@ function xmlToJsonParsing(params) {
                     xmlInfoData.referances[counter_p] = refData.slice(refData.lastIndexOf('OSB_Applications', '$')).replace(/\$/g, '/');
                     xmlInfoData.resourceType[counter_p] = refData.split('$')[0];
 
-
-
+                    
                     if (xmlInfoData.resourceType[counter_p] === "BusinessService") {
                         xmlInfoData.bsCount += 1;
                     } else if (xmlInfoData.resourceType[counter_p] === "ProxyService") {

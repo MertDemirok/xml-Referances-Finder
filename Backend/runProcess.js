@@ -1,28 +1,43 @@
 var fileRead = require('./readFile');
 var run = require('./runProcess'); // for test
 var xmlProcesser = require('./xmlProcesser');
-var log = require('../log')
-
+var log = require('../log');
+var path = require('path');
 
 //Process Start
-module.exports.runProcess = function runProcess(writePath,ReadPath){
-  
-    getXML(writePath,ReadPath);
-   // getXML("new file name");
+module.exports.runProcess = function runProcess(excelOptions) {
+
+    getXML(excelOptions);
 
 };
 
 
-function getXML(wPath,rPath) {
+function getXML(eO) {
 
-    fileRead.readFileXml(wPath).then( content => {
-      
-    xmlProcesser.xmlTransform(content,rPath);
+  fileRead.readFileXml(eO.readPath).then(content => {
+
+    xmlProcesser.xmlTransform(content, eO);
   });
 }
 
 //for test function
-//run.runProcess("../ImportXML/ExportInfo","../ExportToExcel/Referances.xlsx");
+/**
+ *
+              var excelOptions2 = {
+                oparation: "writeFiletoXlsxForReferances",
+                readPath:"./ImportXML/ExportInfo",
+                writePath: "./ExportToExcel/Referances.xlsx",
+                sheetName : "RefSheet",
+                headers : ["Proxy Service Path", "References", "Reference Resource Type", "# BS invoked", "# PX invoked"],
+            };
+
+              excelExport.runProcess(excelOptions2);
+
+ *
+ */
+
+
+//run.runProcess();
 
 
 

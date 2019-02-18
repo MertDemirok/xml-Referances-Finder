@@ -7,7 +7,6 @@ var formidable = require('formidable');
 http.createServer(function (request, response) {
     console.log('request starting...');
 
-
     var filePath = '.' + request.url;
 
     console.log( filePath )
@@ -24,8 +23,48 @@ http.createServer(function (request, response) {
            fs.rename(oldpath, newpath, function (err) {
               if (err) throw err;
              // response.write(200, { 'Content-Type': contentType });
-              console.log('File uploaded and moved!')
-              excelExport.runProcess("./ImportXML/ExportInfo","./ExportToExcel/Referances.xlsx");
+              console.log('File uploaded and moved!');
+              
+              /** 
+               * 
+               * 
+               *  // will be trigger click button  
+              var excelOptions1 = {
+                oparation: "writeFiletoXlsxForPath",
+                readPath:"./ImportXML/ExportInfo",
+                writePath: "./ExportToExcel/other/Referances_path.xlsx",
+                sheetName : "Proxy Service Path",
+                localProjectPath:"",
+                serviceType:"ProxyService",
+                headers : ["Proxy Service Path"],
+            };
+
+            excelExport.runProcess(excelOptions1);
+
+              var excelOptions2 = {
+                oparation: "writeFiletoXlsxForReferances",
+                readPath:"./ImportXML/ExportInfo",
+                writePath: "./ExportToExcel/Referances.xlsx",
+                sheetName : "RefSheet",
+                localProjectPath:"",
+                serviceType:"ProxyService",
+                headers : ["Proxy Service Path", "References", "Reference Resource Type", "# BS invoked", "# PX invoked"],
+            }; 
+  excelExport.runProcess(excelOptions2);
+              */
+
+              var excelOptions3 = {
+                oparation: "findEndPoints",
+                readPath:"./ImportXML/ExportInfo",
+                writePath: "./ExportToExcel/other/EndPoints.xlsx",
+                sheetName : "EndPointSheet",
+                localProjectPath:"C:/Users/mert.demirok/Desktop",
+                serviceType:"BusinessService",
+                headers : ["Proxy Service Path", "EndPoints"],
+            }; 
+
+              excelExport.runProcess(excelOptions3);
+
              
             }); 
        });

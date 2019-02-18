@@ -15,7 +15,7 @@
     <div class="container">
         <div class="container">
             
-            <h1 class="display-6 text-center mb-6">Xml Referances Finder</h1>
+            <h1 class="display-6 text-center mb-6"></h1>
             
             <div class="row mb-4">
               <div class="col text-center">
@@ -29,15 +29,21 @@
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h4 class="modal-title" id="myModalLabel">insert xml file</h4>
+                  <h4 class="modal-title" id="myModalLabel">Xml Data Processer</h4>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
                 <div class="modal-body">
-                  
+                  <div class="col-12">
+                    <p class="text-justify">Where is Osb Application Local Path:
+                        <input class="form-control"  id="local-path"  type="text" placeholder="C:\Projects\aTTIP\SOA\ ">
+                    </p>           
+                 
+                </div>
+
                     <div class="col-12">
-                        <p class="text-justify">insert export file</p>                
+                        <p class="text-justify">You can insert export file:</p>                
                           <label class="input-group-btn">
                               <span class="btn btn-primary">
                                   Browse&hellip; <input  id="xml-file" type="file" onchange="loadDoc(this)" style="display: none;" multiple>
@@ -59,17 +65,19 @@
       </div>
     <script>
 
+
       function loadDoc() {
   var xhttp = new XMLHttpRequest();
   let xml = document.getElementById("xml-file").files[0];  
+  document.getElementById('local-path').innerText;
   let formData = new FormData();
   formData.append("xml", xml);   
  
-  document.getElementById('status').style.display = "hide";
+  document.getElementById('status').display = "hide";
   
  xhttp.onreadystatechange = function() {
 
-  console.log(this.response ,this.responseText, this.responseType)
+
     if (this.readyState == 4 && this.status == 200 ) {
     
       setInterval( function(){ document.getElementById('status').textContent = "Done"; } , 4000);
