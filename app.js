@@ -9,65 +9,101 @@ http.createServer(function (request, response) {
 
     var filePath = '.' + request.url;
 
-    console.log( filePath )
     if (filePath == './')
         filePath = './index.html';
-    else if (filePath == './ExportToExcel'){
+    else if (filePath == './ExportToExcel') {
         var form = new formidable.IncomingForm();
+
         form.parse(request, function (err, fields, files) {
+
+            if(files !== undefined){
+                var oldpath = files.xml.path;
           
-            var oldpath = files.xml.path;
-            
-           var newpath = './ImportXML/' + files.xml.name;
+           
+
+            var newpath = './ImportXML/' + files.xml.name;
+
+            fs.rename(oldpath, newpath, function (err) {
+                if (err) throw err;
+                // response.write(200, { 'Content-Type': contentType });
+                console.log('File uploaded and moved!');
+
+                /** 
+                 * 
+                 * 
+                 *  // will be trigger click button  
+                var Resources = {
+                  oparation: "writeFiletoXlsxForPath",
+                  readPath:"./ImportXML/ExportInfo",
+                  writePath: "./ExportToExcel/other/Resources.xlsx",
+                  sheetName : "Proxy Service Path",
+                  localProjectPath:"",
+                  serviceType:"ProxyService",
+                  repateStatus: false,
+                  headers : ["Proxy Service Path"],
+              };
+  
          
-           fs.rename(oldpath, newpath, function (err) {
-              if (err) throw err;
-             // response.write(200, { 'Content-Type': contentType });
-              console.log('File uploaded and moved!');
-              
-              /** 
-               * 
-               * 
-               *  // will be trigger click button  
-              var excelOptions1 = {
-                oparation: "writeFiletoXlsxForPath",
-                readPath:"./ImportXML/ExportInfo",
-                writePath: "./ExportToExcel/other/Referances_path.xlsx",
-                sheetName : "Proxy Service Path",
-                localProjectPath:"",
-                serviceType:"ProxyService",
-                headers : ["Proxy Service Path"],
-            };
+  
+                var Referances = {
+                  oparation: "writeFiletoXlsxForReferances",
+                  readPath:"./ImportXML/ExportInfo",
+                  writePath: "./ExportToExcel/Referances.xlsx",
+                  sheetName : "RefSheet",
+                  localProjectPath:"",
+                  serviceType:"ProxyService",
+                  repateStatus: false,
+                  headers : ["Proxy Service Path", "References", "Reference Resource Type", "# BS invoked", "# PX invoked"],
+              }; 
+    
 
-            excelExport.runProcess(excelOptions1);
 
-              var excelOptions2 = {
+
+     var ProxyService = {
+                    oparation: "findEndPoints",
+                    readPath: "./ImportXML/ExportInfo",
+                    writePath: "./ExportToExcel/other/EndPoints_ProxyService.xlsx",
+                    localProjectPath: "C:/Users/mert.demirok/Desktop",
+                    serviceType: "ProxyService",
+                    repateStatus: false,
+                    headers: ["Proxy Service Path", "EndPoints"],
+                };
+
+
+                
+                var BusinessService = {
+                    oparation: "findEndPoints",
+                    readPath: "./ImportXML/ExportInfo",
+                    writePath: "./ExportToExcel/other/EndPoints_BusinessService.xlsx",
+                    localProjectPath: "C:/Users/mert.demirok/Desktop",
+                    serviceType: "BusinessService",
+                    repateStatus: false,
+                    headers: ["Proxy Service Path", "EndPoints"],
+                };
+
+                
+                */
+
+               var Referances = {
                 oparation: "writeFiletoXlsxForReferances",
                 readPath:"./ImportXML/ExportInfo",
                 writePath: "./ExportToExcel/Referances.xlsx",
                 sheetName : "RefSheet",
                 localProjectPath:"",
                 serviceType:"ProxyService",
+                repateStatus: false,
                 headers : ["Proxy Service Path", "References", "Reference Resource Type", "# BS invoked", "# PX invoked"],
             }; 
-  excelExport.runProcess(excelOptions2);
-              */
+         
 
-              var excelOptions3 = {
-                oparation: "findEndPoints",
-                readPath:"./ImportXML/ExportInfo",
-                writePath: "./ExportToExcel/other/EndPoints.xlsx",
-                sheetName : "EndPointSheet",
-                localProjectPath:"C:/Users/mert.demirok/Desktop",
-                serviceType:"BusinessService",
-                headers : ["Proxy Service Path", "EndPoints"],
-            }; 
+                var response = excelExport.runProcess(Referances);
+                console.log("One Iteration | Status:", response);
+               
 
-              excelExport.runProcess(excelOptions3);
-
-             
-            }); 
-       });
+            });
+           
+        }  
+        });
     }
 
 
@@ -94,17 +130,17 @@ http.createServer(function (request, response) {
             break;
     }
 
-    fs.readFile(filePath, function(error, content) {
+    fs.readFile(filePath, function (error, content) {
         if (error) {
-            if(error.code == 'ENOENT'){
-                fs.readFile('./404.html', function(error, content) {
+            if (error.code == 'ENOENT') {
+                fs.readFile('./404.html', function (error, content) {
                     response.writeHead(200, { 'Content-Type': contentType });
                     response.end(content, 'utf-8');
                 });
             }
             else {
                 response.writeHead(500);
-                response.end('Sorry, check with the site admin for error: '+error.code+' ..\n');
+                response.end('Sorry, check with the site admin for error: ' + error.code + ' ..\n');
                 response.end();
             }
         }

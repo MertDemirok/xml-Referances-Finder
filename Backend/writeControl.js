@@ -1,11 +1,11 @@
 // Write Referances.xlsx
 var excel = require('excel4node');
 var fs = require('fs');
+var excelExport = require('./runProcess');
 var exports = module.exports = {};
-var path = require('path');
 
 exports.writeFile = function (params, opt) {
-
+    const logStatus = "";
     var workbook = new excel.Workbook();
     var worksheet = "";
     switch (opt.oparation) {
@@ -23,99 +23,110 @@ exports.writeFile = function (params, opt) {
         case "findEndPoints":
 
             worksheet = ExcelFormat(workbook, opt);
-            writeFiletoXlsxForEndPoint(params, worksheet, opt);
+            worksheet = writeFiletoXlsxForEndPoint(params, worksheet, opt);
+
             break;
         default:
             console.log('SwitchCase default!');
             break;
     }
 
-
     if (worksheet !== "") {
 
         try {
-            // Query the entry
-            var stats = fs.lstatSync(opt.writePath);
 
-            // Is it a directory?
-            if (stats.isDirectory()) {
-                fs.unlink(opt.writePath, function (err) {
-                    if (err) throw err;
-                    // if no error, file has been deleted successfully
-                    console.log('File deleted!');
-                });
-            }
+            
+            workbook.write(opt.writePath, function (err, stats) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log(opt.writePath , " Done :) \n" , stats);
+                   
+                    console.log("-".repeat(200));
+                    return "";
+                }
+            });
+
         }
         catch (e) {
-            console.log('File not exist!');
+            console.log("Excel Write Error: ", e);
         }
 
-        workbook.write(opt.writePath, function (err, stats) {
-            if (err) {
-                console.error(err);
-            } else {
-                console.log(opt.writePath, " Done :) \n", stats); // Prints out an instance of a node.js fs.Stats object
-            }
-        });
-
     } else {
-        console.log("code:1050 Bir hata oluştu!!")
+        console.log("worksheet empty!")
     }
 
     //Proccess Finish
+    return "Success";
 }
 
 
 function writeFiletoXlsxForEndPoint(params, worksheet, excelOptions) {
 
-    var path_List = []
-
-
     params.forEach(function (data, i) {
 
-        
         var path_Data = data.path;
-       
-        path_List.push(path_Data);
+        if (path_Data !== "WSX/business/CurrencyConverter" && path_Data !== "WSX/proxy/CurrencyConverter") {
+          
+            worksheet.cell(i + 2, 1).string(path_Data);
+            var resEndpointPath = getPath(path_Data, excelOptions);
 
+            //recuersive progress
+            var endpointUrl = findEndPoints(resEndpointPath, excelOptions);
+            worksheet.cell(i + 2, 2).string(endpointUrl);
 
-        worksheet.cell(i + 2, 2).string(path_Data);
-
+        }
     });
 
-    var endpointPath = getPath(path_List, excelOptions);
-    console.log(endpointPath);
-
-    
-    
+    return worksheet;
 }
 
 
 
-function getPath(params, excelOptions) {
+function getPath(param, excelOptions) {
 
-  
-    var EndPointpath = [];
-    for (let i = 0; i < params.length; i++) {
-        const element = params[i];
+    var EndPointpath = '';
 
-        EndPointpath[i] = excelOptions.localProjectPath + "/" + element;
-      
-        if (excelOptions.serviceType === "ProxyService") {
-           
-            EndPointpath[i] = EndPointpath[i].concat('.ProxyService');
-        } else if (excelOptions.serviceType === "BusinessService") {
+    const element = pathFixing(param);
+    EndPointpath = excelOptions.localProjectPath + "/" + element;
 
-            EndPointpath[i] = EndPointpath[i].concat('.BusinessService');
-        }
-        
+    if (excelOptions.serviceType === "ProxyService") {
+
+        EndPointpath = EndPointpath.concat('.ProxyService');
+    } else if (excelOptions.serviceType === "BusinessService") {
+
+        EndPointpath = EndPointpath.concat('.BusinessService');
     }
- 
+
     return EndPointpath;
 }
 
-function findEndPoints(params) {
+function pathFixing(pathD) {
+    var fpath = [];
+    var fixPath = pathD.split('/');
+  
+    for (let i = 0; i < fixPath.length; i++) {
+        if (fixPath[i].length > 40) {
+         //   console.log("path Fix: "+ fixPath[i]);
+            fixPath[i] = fixPath[i].substring(0, 40);
+            fpath[i] = fixPath[i];
+           
+        } else {
+            fpath[i] = fixPath[i];
+        }
+    }
 
+    return fpath.join("/");
+}
+
+function findEndPoints(localpath, eO) {
+
+    var endpointConfig = '';
+    eO.repateStatus = true;
+    eO.readPath = localpath;
+
+    endpointConfig = excelExport.runProcess(eO);
+    return endpointConfig;
 }
 
 function writeFiletoXlsxForReferances(params, worksheet) {

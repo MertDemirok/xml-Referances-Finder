@@ -3,7 +3,6 @@ var he = require('he');
 var writeFile = require('./writeControl');
 
 
-
 module.exports.xmlTransform = function xmlTransform(content, eO) {
 
     var options = {
@@ -24,24 +23,57 @@ module.exports.xmlTransform = function xmlTransform(content, eO) {
         tagValueProcessor: a => he.decode(a) //default is a=>a
     }
 
-      var exportData =  getExportInfoData(content, options, eO);
-      writeFile.writeFile(exportData, eO);
+    var exportData = getExportInfoData(content, options, eO);
+
+    if (!eO.repateStatus) {
+        var result = writeFile.writeFile(exportData, eO);
+        return result;
+    } else {
+        return exportData;
+    }
+
 }
 
 function getExportInfoData(cont, opt, excelOptions) {
+
+
     if (FXparser.validate(cont) === true) {
 
         var jsonObj = FXparser.parse(cont, opt);
-        var serviceType = excelOptions.serviceType;
-        var resultObject = xmlToJsonParsing(jsonObj,serviceType);
 
-      return resultObject;  
-     
+        var serviceType = excelOptions.serviceType;
+        if (!excelOptions.repateStatus) {
+            var resultObject = xmlToJsonParsingForDefault(jsonObj, serviceType);
+            return resultObject;
+        } else {
+            var resultObject = xmlToJsonParsingForEndPoint(jsonObj);
+            return resultObject;
+        }
     }
 }
 
+function xmlToJsonParsingForEndPoint(params) {
 
-function xmlToJsonParsing(params,type) {
+    var items = params['xml-fragment']['ser:endpointConfig']['tran:URI'];
+    var endPoint = "";
+
+    if (items === undefined) {
+        endPoint = "Not Found EndPoint :(";
+    } else {
+        if (items['env:value']['#text'] !== undefined) {
+
+            endPoint = items['env:value']['#text'];
+
+        } else {
+            endPoint = items['env:value'];
+
+        }
+    }
+
+    return endPoint;
+}
+
+function xmlToJsonParsingForDefault(params, type) {
 
     var items = params['xml-fragment']['imp:exportedItemInfo'];
 
@@ -49,7 +81,7 @@ function xmlToJsonParsing(params,type) {
     var counter = 0;
 
     items.forEach(function (item) {
-        if (item.attr.typeId ===  type) {
+        if (item.attr.typeId === type) {
 
             var props = item['imp:properties']['imp:property'];
             var counter_p = 0;
@@ -57,7 +89,7 @@ function xmlToJsonParsing(params,type) {
             var xmlInfoData = { path: "", referances: [], resourceType: [], psCount: 0, bsCount: 0 }
 
             xmlInfoData.path = item.attr.instanceId;
-            
+
             props.forEach(function (prop) {
 
                 if (prop.attr.name === "extrefs") {
@@ -67,7 +99,7 @@ function xmlToJsonParsing(params,type) {
                     xmlInfoData.referances[counter_p] = refData.slice(refData.lastIndexOf('OSB_Applications', '$')).replace(/\$/g, '/');
                     xmlInfoData.resourceType[counter_p] = refData.split('$')[0];
 
-                    
+
                     if (xmlInfoData.resourceType[counter_p] === "BusinessService") {
                         xmlInfoData.bsCount += 1;
                     } else if (xmlInfoData.resourceType[counter_p] === "ProxyService") {
