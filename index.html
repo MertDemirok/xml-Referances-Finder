@@ -7,107 +7,98 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
     crossorigin="anonymous">
-  <script language="JavaScript" type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
-  <script language="JavaScript" type="text/javascript" src="/js/jquery-ui-personalized-1.5.2.packed.js"></script>
-  <script language="JavaScript" type="text/javascript" src="/js/sprinkle.js"></script>
+  <link rel="stylesheet" href="Style/index.css">
+
   <title>XMLReferancer</title>
 </head>
-
 <body>
-
   <div class="container">
-    <div class="container">
+    <div class="header"> <h3></h3> </div>
+    <div class="col-12">
+      <p class="text-justify">Export Info Upload: </p>
+      <a href="#" class="btn btn-success  btn-block " data-toggle="modal" data-target="#largeModal">Export Excel</a>
+    </div>
+    <div class="col-12">
+      <p class="text-justify">Where is Osb Application Local Path:
+        <input class="form-control" id="local-path" type="text" placeholder="C:\Projects\aTTIP\SOA\ ">
+      </p>
+    </div>
+    <div class="col-12">
+      <p class="text-justify">Operation Name:
+        <select  class="form-control" id="operations" name="operations" onmousedown="this.value='';">
+          <option value='writeFiletoXlsxForReferances' selected="selected">Select</option>
+          <option value='writeFiletoXlsxForPath'>writeFiletoXlsxForPath</option>
+          <option value='writeFiletoXlsxForReferances'>writeFiletoXlsxForReferances</option>
+          <option value='findEndPoints'>findEndPoints</option>
+        </select>
+      </p>
+    </div>
 
-      <h1 class="display-6 text-center mb-6"></h1>
+    <div class="col-12">
+      <p class="text-justify">Service Type :
+        <select class="form-control" id="service-type" name="service-type" onmousedown="this.value='';">
+          <option value='ProxyService' selected="selected">Select</option>
+          <option value='ProxyService'>ProxyService</option>
+          <option value='BusinessService'>BusinessService</option>
+        </select>
 
-      <div class="row mb-4">
-        <div class="col text-center">
-          <h3></h3>
-          <a href="#" class="btn btn-lg btn-success" data-toggle="modal" data-target="#largeModal">Export Excel</a>
-        </div>
-      </div>
+      </p>
+    </div>
+    
+    <button type="button" class="btn  btn-danger btn-block" onclick="optionPush()">Process Run</button>
+    <!-- large modal -->
+    <div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">Xml Data Processer</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="col-md-12 col-md-offset-4">
+              <h5>You can insert export file:</h5>
+              <form action="/ExportToExcel" method="post" enctype="multipart/form-data">
+                <!-- COMPONENT START -->
+                <div class="form-group">
+                  <div class="input-group input-file" name="Fichier1">
+                    <span class="input-group-btn">
+                      <button class="btn btn-default btn-choose" type="button">Choose</button>
+                    </span>
+                    <input type="text" class="form-control" style="margin-right: 10px;" name="upload"
+                      placeholder='Choose a file...' />
+                    <span class="input-group-btn">
+                      <button class="btn btn-warning btn-reset" type="button">Reset</button>
+                    </span>
+                  </div>
+                </div>
+                <!-- COMPONENT END -->
 
-      <!-- large modal -->
-      <div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="basicModal"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title" id="myModalLabel">Xml Data Processer</h4>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="col-12">
-                <p class="text-justify">Where is Osb Application Local Path:
-                  <input class="form-control" id="local-path" type="text" placeholder="C:\Projects\aTTIP\SOA\ ">
-                </p>
-
-              </div>
-
-              <div class="col-12">
-                <p class="text-justify">You can insert export file:</p>
-                <label class="input-group-btn">
-                  <span class="btn btn-primary">
-                    Browse&hellip; <input id="xml-file" type="file" onchange="loadDoc(this)" style="display: none;"
-                      multiple>
-                  </span>
-                </label>
-                <span id="status" class="help-block">
-
-                </span>
-              </div>
-
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <a type="button" class="btn btn-primary" href="../XmlReferanceFinder/ExportToExcel/Referances.xlsx"
-                download>Export Excel</a>
+                <div class="modal-footer">
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-primary pull-right" value="Upload">Export Excels</button>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <script>
-
-
-      function loadDoc() {
-        var xhttp = new XMLHttpRequest();
-        let xml = document.getElementById("xml-file").files[0];
-        document.getElementById('local-path').innerText;
-        let formData = new FormData();
-        formData.append("xml", xml);
-
-        document.getElementById('status').display = "hide";
-
-        xhttp.onreadystatechange = function () {
-
-
-          if (this.readyState == 4 && this.status == 200) {
-
-            document.getElementById('status').textContent = "Done";
-
-          }
-
-        };
-        xhttp.open("POST", "/ExportToExcel", true);
-
-        xhttp.send(formData);
-
-
-
-      }
-    </script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-      crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
-      integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
-      crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
-      integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
-      crossorigin="anonymous"></script>
+    <small class="Info">Options Example</small>
+    <div class="card" style="width: 40rem;">
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted">local  Path:</h6>
+          <p class="card-text">C:/Users/mert.demirok/Desktop</p>
+          <h6 class="card-subtitle mb-2 text-muted">findEndPoints: </h6>
+          <p class="card-text">ProxyService or BusinessService</p>
+        </div>
+      </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+  <script src="index.js"></script>
 </body>
 
 </html>
