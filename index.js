@@ -40,20 +40,21 @@ function optionPush() {
         oparation: operations_name, //option use
         localProjectPath: local_Path,
     };
-    var xhttp = new XMLHttpRequest();
 
-    
-    xhttp.onreadystatechange = function () {
 
-        if (this.readyState == 4 && this.status == 200) {
-         console.log ("Done");
+    $.ajax({
+        type: 'POST',
+        contentType: "application/x-www-form-urlencoded;charset=utf-8",
+        url: '/options',
+        data: JSON.stringify(data),
+        success: function(msg){
+            alert('Export Excel Done' + msg);
         }
-    };
-    xhttp.open("POST", "http://127.0.0.1:8125/options", true);
-    xhttp.setRequestHeader("content-type", "application/x-www-form-urlencoded");
-    xhttp.setRequestHeader("cache-control", "no-cache");
-
-    xhttp.send(JSON.stringify(data));
+    });
+   
+  
+   
+ 
 
 }
 

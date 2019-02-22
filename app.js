@@ -1,13 +1,9 @@
 var http = require('http');
 var fs = require('fs');
 var path = require('path');
-var excelExport = require('./Backend/runProcess');
-
 var formidable = require('formidable');
-const express = require('express');
 
-
-
+var excelExport = require('./Backend/runProcess');
 
 
 http.createServer(function (request, response) {
@@ -39,7 +35,7 @@ http.createServer(function (request, response) {
         var localPath = "";
         var sheetName = "";
         var write_Path = "";
-
+   
         const { headers, method, url } = request;
         let body = [];
         request.on('error', (err) => {
@@ -48,51 +44,45 @@ http.createServer(function (request, response) {
             body.push(chunk);
         }).on('end', () => {
             body = Buffer.concat(body).toString();
-            // At this point, we have the headers, method, url and body, and can now
-            // do whatever we need to in order to respond to this request.
 
-            var responseData = JSON.parse(body);
+                var responseData = JSON.parse(body)
 
             if (responseData.oparation == "findEndPoints") {
-                header = ["Proxy Service Path", "EndPoints"];
-                sheetName = "EndPoints";
-                type = responseData.serviceType;
-                localPath = responseData.localProjectPath;
-                write_Path = "./ExportToExcel/other/EndPoints_" + type + ".xlsx";
-            } else if (responseData.oparation == "writeFiletoXlsxForReferances") {
-                header = ["Proxy Service Path", "References", "Reference Resource Type", "# BS invoked", "# PX invoked"];
-                localPath = "";
-                sheetName = "Referances";
-                type = "ProxyService";
-                write_Path = "./ExportToExcel/Referances.xlsx";
-            } else if (responseData.oparation == "writeFiletoXlsxForPath") {
-                header = ["Proxy Service Path"];
-                localPath = "";
-                sheetName = "Resources";
-                type = "ProxyService";
-                write_Path = "./ExportToExcel/other/Resources.xlsx";
-            }
-
-            var options = {
-                oparation: responseData.oparation,
-                readPath: "./ImportXML/ExportInfo",
-                writePath: write_Path,
-                localProjectPath: localPath,
-                repateStatus: false,
-                headers: header,
-                sheetName: sheetName,
-                serviceType: type
-            }
-
-
-            var response = excelExport.runProcess(options);
-            console.log("One Iteration | Status:", response);
-            console.log(options);
-
+                    header = ["Proxy Service Path", "EndPoints"];
+                    sheetName = "EndPoints";
+                    type = responseData.serviceType;
+                    localPath = responseData.localProjectPath;
+                    write_Path = "./ExportToExcel/other/EndPoints_" + type + ".xlsx";
+                } else if (responseData.oparation == "writeFiletoXlsxForReferances") {
+                    header = ["Proxy Service Path", "References", "Reference Resource Type", "# BS invoked", "# PX invoked"];
+                    localPath = "";
+                    sheetName = "Referances";
+                    type = "ProxyService";
+                    write_Path = "./ExportToExcel/Referances.xlsx";
+                } else if (responseData.oparation == "writeFiletoXlsxForPath") {
+                    header = ["Proxy Service Path"];
+                    localPath = "";
+                    sheetName = "Resources";
+                    type = "ProxyService";
+                    write_Path = "./ExportToExcel/other/Resources.xlsx";
+                }
+    
+                var options = {
+                    oparation: responseData.oparation,
+                    readPath: "./ImportXML/ExportInfo",
+                    writePath: write_Path,
+                    localProjectPath: localPath,
+                    repateStatus: false,
+                    headers: header,
+                    sheetName: sheetName,
+                    serviceType: type
+                }
+    
+                console.log(options);
+                var response = excelExport.runProcess(options);
+                console.log("One Iteration | Status:", response); 
+          
         });
-
-
-
 
     }
 

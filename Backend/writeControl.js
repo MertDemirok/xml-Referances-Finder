@@ -34,15 +34,13 @@ exports.writeFile = function (params, opt) {
     if (worksheet !== "") {
 
         try {
-
-            
             workbook.write(opt.writePath, function (err, stats) {
                 if (err) {
                     console.log(err)
                 } else {
-                    console.log(opt.writePath , " Done :) \n" , stats);
+                    console.log( stats, " Done -->" , opt.writePath);
                    
-                    console.log("-".repeat(200));
+                    console.log("-".repeat(100));
                     return "";
                 }
             });
@@ -107,7 +105,7 @@ function pathFixing(pathD) {
   
     for (let i = 0; i < fixPath.length; i++) {
         if (fixPath[i].length > 40) {
-         //   console.log("path Fix: "+ fixPath[i]);
+            console.log("path Fix: "+ fixPath[i]);
             fixPath[i] = fixPath[i].substring(0, 40);
             fpath[i] = fixPath[i];
            

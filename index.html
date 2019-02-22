@@ -14,38 +14,41 @@
 <body>
   <div class="container">
     <div class="header"> <h3></h3> </div>
-    <div class="col-12">
-      <p class="text-justify">Export Info Upload: </p>
-      <a href="#" class="btn btn-success  btn-block " data-toggle="modal" data-target="#largeModal">Export Excel</a>
-    </div>
-    <div class="col-12">
-      <p class="text-justify">Where is Osb Application Local Path:
-        <input class="form-control" id="local-path" type="text" placeholder="C:\Projects\aTTIP\SOA\ ">
-      </p>
-    </div>
-    <div class="col-12">
-      <p class="text-justify">Operation Name:
-        <select  class="form-control" id="operations" name="operations" onmousedown="this.value='';">
-          <option value='writeFiletoXlsxForReferances' selected="selected">Select</option>
-          <option value='writeFiletoXlsxForPath'>writeFiletoXlsxForPath</option>
-          <option value='writeFiletoXlsxForReferances'>writeFiletoXlsxForReferances</option>
-          <option value='findEndPoints'>findEndPoints</option>
-        </select>
-      </p>
-    </div>
-
-    <div class="col-12">
-      <p class="text-justify">Service Type :
-        <select class="form-control" id="service-type" name="service-type" onmousedown="this.value='';">
-          <option value='ProxyService' selected="selected">Select</option>
-          <option value='ProxyService'>ProxyService</option>
-          <option value='BusinessService'>BusinessService</option>
-        </select>
-
-      </p>
-    </div>
+    <form method="post" enctype="multipart/form-data/">
+      <div class="col-12">
+          <p class="text-justify">Export Info Upload: </p>
+          <a href="#" class="btn btn-success  btn-block " data-toggle="modal" data-target="#largeModal">Upload Export Info</a>
+        </div>
+        <div class="col-12">
+          <p class="text-justify">Where is Osb Application Local Path:
+            <input class="form-control" id="local-path" type="text" placeholder="C:\Projects\aTTIP\SOA\ ">
+          </p>
+        </div>
+        <div class="col-12">
+          <p class="text-justify">Operation Name:
+            <select  class="form-control" id="operations" name="operations" onmousedown="this.value='';">
+              <option value='writeFiletoXlsxForReferances' selected="selected">Select</option>
+              <option value='writeFiletoXlsxForPath'>writeFiletoXlsxForPath</option>
+              <option value='writeFiletoXlsxForReferances'>writeFiletoXlsxForReferances</option>
+              <option value='findEndPoints'>findEndPoints</option>
+            </select>
+          </p>
+        </div>
     
-    <button type="button" class="btn  btn-danger btn-block" onclick="optionPush()">Process Run</button>
+        <div class="col-12">
+          <p class="text-justify">Service Type :
+            <select class="form-control" id="service-type" name="service-type" onmousedown="this.value='';">
+              <option value='ProxyService' selected="selected">Select</option>
+              <option value='ProxyService'>ProxyService</option>
+              <option value='BusinessService'>BusinessService</option>
+            </select>
+    
+          </p>
+        </div>
+        
+        <button type="button" class="btn  btn-danger btn-block" onclick="optionPush()">Export Excels</button>
+    </form>
+
     <!-- large modal -->
     <div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -77,7 +80,7 @@
 
                 <div class="modal-footer">
                   <div class="form-group">
-                    <button type="submit" class="btn btn-primary pull-right" value="Upload">Export Excels</button>
+                    <button type="submit" class="btn btn-primary pull-right" value="Upload">Upload</button>
                   </div>
                 </div>
               </form>
@@ -87,7 +90,7 @@
       </div>
     </div>
     <small class="Info">Options Example</small>
-    <div class="card" style="width: 40rem;">
+    <div class="card" style="width: 15rem;">
         <div class="card-body">
           <h6 class="card-subtitle mb-2 text-muted">local  Path:</h6>
           <p class="card-text">C:/Users/mert.demirok/Desktop</p>
