@@ -52,22 +52,28 @@ http.createServer(function (request, response) {
                     sheetName = "EndPoints";
                     type = responseData.serviceType;
                     localPath = responseData.localProjectPath;
-                    write_Path = "./ExportToExcel/other/EndPoints_" + type + ".xlsx";
+                    write_Path = process.env.USERPROFILE+"/Desktop/"+responseData.projectName+"/EndPoints_" + type + ".xlsx";
                 } else if (responseData.oparation == "writeFiletoXlsxForReferances") {
-                    header = ["Proxy Service Path", "References", "Reference Resource Type", "# BS invoked", "# PX invoked"];
+                    header = ["Proxy Service Path","Type Id", "References", "Reference Resource Type", "# BS invoked", "# PX invoked"];
                     localPath = "";
                     sheetName = "Referances";
-                    type = "ProxyService";
-                    write_Path = "./ExportToExcel/Referances.xlsx";
+                    type = "";
+                    write_Path = process.env.USERPROFILE+"/Desktop/"+responseData.projectName+"/References.xlsx";
                 } else if (responseData.oparation == "writeFiletoXlsxForPath") {
                     header = ["Proxy Service Path"];
                     localPath = "";
                     sheetName = "Resources";
-                    type = "ProxyService";
-                    write_Path = "./ExportToExcel/other/Resources.xlsx";
+                    type = "";
+                    write_Path = process.env.USERPROFILE+"/Desktop/"+responseData.projectName+"/Resources.xlsx";
+                } else if (responseData.oparation == "compareProject") {
+                    header = ["File Path","Is there"];
+                    localPath = responseData.localProjectPath;
+                    sheetName = "application Tree";
+                    type = "";
+                    write_Path = process.env.USERPROFILE+"/Desktop/"+responseData.projectName+"/project_tree.xlsx";
                 }
-    
                 var options = {
+                    projectName: responseData.projectName,
                     oparation: responseData.oparation,
                     readPath: "./ImportXML/ExportInfo",
                     writePath: write_Path,
@@ -75,10 +81,12 @@ http.createServer(function (request, response) {
                     repateStatus: false,
                     headers: header,
                     sheetName: sheetName,
-                    serviceType: type
+                    serviceType: type,
+                    oracleVersion: responseData.oVersion
                 }
     
                 console.log(options);
+                
                 var response = excelExport.runProcess(options);
                 console.log("One Iteration | Status:", response); 
           

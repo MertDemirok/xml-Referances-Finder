@@ -1,8 +1,10 @@
 const FXparser = require('fast-xml-parser');
 var he = require('he');
 var writeFile = require('./writeControl');
+const dirTree = require("directory-tree");
 
-
+var projectPaths = []
+var status = 0;
 module.exports.xmlTransform = function xmlTransform(content, eO) {
 
     var options = {
@@ -25,14 +27,46 @@ module.exports.xmlTransform = function xmlTransform(content, eO) {
 
     var exportData = getExportInfoData(content, options, eO);
 
-    if (!eO.repateStatus) {
-        var result = writeFile.writeFile(exportData, eO);
-        return result;
+    if (eO.oparation == "compareProject") {
+        getFolderTree(eO.localProjectPath);
+        var result = writeFile.writeFile(projectPaths, eO);
+
+        projectPaths.forEach(element => {
+            var projectPath = element.substring(eO.localProjectPath.length + 1);
+
+            if(status == 1)
+            console.log("Path-->" , projectPath);
+
+            exportData.forEach(edata => {
+                var exportXml = edata.resourceType[0].replace(/\//g, '\\');
+
+                if (projectPath === exportXml) {
+                    status = 1;
+                    return;
+                }
+               
+                status = 0;
+            });
+
+          
+
+        });
+
+        return "";
     } else {
-        return exportData;
+
+        if (!eO.repateStatus) {
+            var result = writeFile.writeFile(exportData, eO);
+            return result;
+        } else {
+            return exportData;
+        }
+
     }
 
 }
+
+
 
 function getExportInfoData(cont, opt, excelOptions) {
 
@@ -41,39 +75,49 @@ function getExportInfoData(cont, opt, excelOptions) {
 
         var jsonObj = FXparser.parse(cont, opt);
 
-        var serviceType = excelOptions.serviceType;
+        const serviceType = excelOptions.serviceType;
+        const operation = excelOptions.oparation;
+
         if (!excelOptions.repateStatus) {
-            var resultObject = xmlToJsonParsingForDefault(jsonObj, serviceType);
+            var resultObject = xmlToJsonParsingForDefault(jsonObj, serviceType, operation);
             return resultObject;
         } else {
-            var resultObject = xmlToJsonParsingForEndPoint(jsonObj);
+            var resultObject = xmlToJsonParsingForEndPoint(jsonObj,excelOptions);
             return resultObject;
         }
     }
 }
 
-function xmlToJsonParsingForEndPoint(params) {
+function xmlToJsonParsingForEndPoint(params,opt) {
 
-    var items = params['xml-fragment']['ser:endpointConfig']['tran:URI'];
+    var items = ""
+   
+    if(opt.oracleVersion == "12c"){
+        if(opt.serviceType === "ProxyService"){
+            items = params['ser:proxyServiceEntry']['ser:endpointConfig']['tran:URI']
+        }else if(opt.serviceType === "BusinessService"){
+            items = params['con:businessServiceEntry']['con:endpointConfig']['tran:URI']
+        }
+    }else if( opt.oracleVersion=="11g"){
+     items = params['xml-fragment']['ser:endpointConfig']['tran:URI'];
+    }
+        
     var endPoint = "";
-
-    if (items === undefined) {
-        endPoint = "Not Found EndPoint :(";
+    if (items === undefined || items['env:value'] === undefined) {
+        endPoint = "Not Found EndPoint";
     } else {
         if (items['env:value']['#text'] !== undefined) {
-
             endPoint = items['env:value']['#text'];
-
         } else {
             endPoint = items['env:value'];
-
         }
     }
+
 
     return endPoint;
 }
 
-function xmlToJsonParsingForDefault(params, type) {
+function xmlToJsonParsingForDefault(params, type, opr) {
 
     var items = params['xml-fragment']['imp:exportedItemInfo'];
 
@@ -81,23 +125,36 @@ function xmlToJsonParsingForDefault(params, type) {
     var counter = 0;
 
     items.forEach(function (item) {
-        if (item.attr.typeId === type) {
+
+        if (item.attr.typeId === type || type === "") {
 
             var props = item['imp:properties']['imp:property'];
             var counter_p = 0;
 
-            var xmlInfoData = { path: "", referances: [], resourceType: [], psCount: 0, bsCount: 0 }
+            var xmlInfoData = { path: "", typeId: "", referances: [], resourceType: [], psCount: 0, bsCount: 0 }
 
             xmlInfoData.path = item.attr.instanceId;
+            xmlInfoData.typeId = item.attr.typeId;
 
             props.forEach(function (prop) {
 
-                if (prop.attr.name === "extrefs") {
+                var attrType = "extrefs";
+
+                if (opr == "compareProject") {
+                    attrType = "jarentryname";
+                }
+
+                if (prop.attr.name === attrType) {
 
                     var refData = prop.attr.value.toString();
+                    // console.log("Referances ---->",refData);
 
-                    xmlInfoData.referances[counter_p] = refData.slice(refData.lastIndexOf('OSB_Applications', '$')).replace(/\$/g, '/');
+
+                    xmlInfoData.referances[counter_p] = refData.slice(refData.split('$')[0].length + 1).replace(/\$/g, '/');
+                    // console.log("fix ---->",xmlInfoData.referances[counter_p]);
+                    // xmlInfoData.referances[counter_p] = refData.slice(refData.lastIndexOf('OSB_Applications', '$')).replace(/\$/g, '/');
                     xmlInfoData.resourceType[counter_p] = refData.split('$')[0];
+
 
 
                     if (xmlInfoData.resourceType[counter_p] === "BusinessService") {
@@ -119,5 +176,38 @@ function xmlToJsonParsingForDefault(params, type) {
 }
 
 
+function getFolderTree(localpath) {
 
 
+    var strollingPath = dirTree(localpath);
+
+    if (strollingPath) {
+
+        var child = strollingPath.children;
+
+        child.forEach(element => {
+            filetypeControl(element);
+        });
+
+    }
+
+}
+
+
+function filetypeControl(obj) {
+
+    if (obj.type == 'directory') {
+
+        obj.children.forEach(ch => {
+
+            if (ch.type == 'file') {
+
+                projectPaths.push(ch.path);
+
+            } else {
+                filetypeControl(ch);
+            }
+
+        });
+    }
+}

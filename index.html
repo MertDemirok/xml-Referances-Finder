@@ -2,40 +2,56 @@
 <html lang="en">
 
 <head>
+  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
     crossorigin="anonymous">
   <link rel="stylesheet" href="Style/index.css">
-
+  <link rel="icon" href="./Style/3-middleware.png">
   <title>XMLReferancer</title>
 </head>
 <body>
   <div class="container">
+      <img class="iconImage" src="./Style/3-middleware.png" alt="XMLReferancer">
     <div class="header"> <h3></h3> </div>
+    <p class="text-justify-response">Product V0.1 || aTTIP</p>
     <form method="post" enctype="multipart/form-data/">
       <div class="col-12">
           <p class="text-justify">Export Info Upload: </p>
           <a href="#" class="btn btn-success  btn-block " data-toggle="modal" data-target="#largeModal">Upload Export Info</a>
-        </div>
+      </div>
         <div class="col-12">
-          <p class="text-justify">Where is Osb Application Local Path:
+          <p class="text-justify">Project Name:
+            <input class="form-control" id="project-name" type="text" placeholder="chunk-1 Osb-app">
+          </p>
+          <p class="text-justify">Local Path:
             <input class="form-control" id="local-path" type="text" placeholder="C:\Projects\aTTIP\SOA\ ">
           </p>
         </div>
         <div class="col-12">
-          <p class="text-justify">Operation Name:
+          <p class="text-justify">Oracle Version:
+            <select  class="form-control" id="oVersion" name="oVersion" onmousedown="this.value='';">
+              <option value='writeFiletoXlsxForReferances' selected="selected">Select</option>
+              <option value='11g'>10-11g</option>
+              <option value='12c'>12c</option>
+            </select>
+          </p>
+        </div>
+        <div class="col-12">
+          <p class="text-justify">Operation Type:
             <select  class="form-control" id="operations" name="operations" onmousedown="this.value='';">
               <option value='writeFiletoXlsxForReferances' selected="selected">Select</option>
               <option value='writeFiletoXlsxForPath'>writeFiletoXlsxForPath</option>
               <option value='writeFiletoXlsxForReferances'>writeFiletoXlsxForReferances</option>
               <option value='findEndPoints'>findEndPoints</option>
+              <option value='compareProject'>compareProject</option>
             </select>
           </p>
         </div>
     
-        <div class="col-12">
+        <div class="col-12" id="serviceType">
           <p class="text-justify">Service Type :
             <select class="form-control" id="service-type" name="service-type" onmousedown="this.value='';">
               <option value='ProxyService' selected="selected">Select</option>
@@ -89,15 +105,20 @@
         </div>
       </div>
     </div>
-    <small class="Info">Options Example</small>
-    <div class="card" style="width: 15rem;">
+    
+    <br/>
+    <button type="button" id="help" class="btn btn-outline-info">Help</button>
+    <br/>
+    <br/>
+    <div class="card" style="width: 70rem;">
+      <br/>
         <div class="card-body">
           <h6 class="card-subtitle mb-2 text-muted">local  Path:</h6>
           <p class="card-text">C:/Users/mert.demirok/Desktop</p>
           <h6 class="card-subtitle mb-2 text-muted">findEndPoints: </h6>
           <p class="card-text">ProxyService or BusinessService</p>
         </div>
-      </div>
+    </div>
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" crossorigin="anonymous"></script>

@@ -5,7 +5,8 @@ var excelExport = require('./runProcess');
 var exports = module.exports = {};
 
 exports.writeFile = function (params, opt) {
-    const logStatus = "";
+  
+
     var workbook = new excel.Workbook();
     var worksheet = "";
     switch (opt.oparation) {
@@ -23,8 +24,12 @@ exports.writeFile = function (params, opt) {
         case "findEndPoints":
 
             worksheet = ExcelFormat(workbook, opt);
-            worksheet = writeFiletoXlsxForEndPoint(params, worksheet, opt);
+            writeFiletoXlsxForEndPoint(params, worksheet, opt);
+            break;
+        case "compareProject":
 
+            worksheet = ExcelFormat(workbook, opt);
+            writepathMap(params, worksheet, opt);
             break;
         default:
             console.log('SwitchCase default!');
@@ -34,6 +39,13 @@ exports.writeFile = function (params, opt) {
     if (worksheet !== "") {
 
         try {
+
+            var dir =  process.env.USERPROFILE + "/Desktop/"+ opt.projectName;
+            console.log(dir);
+            if (!fs.existsSync(dir)){
+                fs.mkdirSync(dir);
+            }
+
             workbook.write(opt.writePath, function (err, stats) {
                 if (err) {
                     console.log(err)
@@ -41,7 +53,7 @@ exports.writeFile = function (params, opt) {
                     console.log( stats, " Done -->" , opt.writePath);
                    
                     console.log("-".repeat(100));
-                    return "";
+                    return ""; 
                 }
             });
 
@@ -58,6 +70,13 @@ exports.writeFile = function (params, opt) {
     return "Success";
 }
 
+function writepathMap(params, worksheet, excelOptions){
+
+    params.forEach(function (data,i) {
+        worksheet.cell(i + 2, 1).string(data);
+    });
+
+}
 
 function writeFiletoXlsxForEndPoint(params, worksheet, excelOptions) {
 
@@ -84,8 +103,13 @@ function writeFiletoXlsxForEndPoint(params, worksheet, excelOptions) {
 function getPath(param, excelOptions) {
 
     var EndPointpath = '';
+    var element = '';
+    if(excelOptions.oracleVersion =="11g"){
+        element = pathFixing(param);
+    }else{
+        element = param
+    }
 
-    const element = pathFixing(param);
     EndPointpath = excelOptions.localProjectPath + "/" + element;
 
     if (excelOptions.serviceType === "ProxyService") {
@@ -100,21 +124,14 @@ function getPath(param, excelOptions) {
 }
 
 function pathFixing(pathD) {
-    var fpath = [];
     var fixPath = pathD.split('/');
-  
-    for (let i = 0; i < fixPath.length; i++) {
-        if (fixPath[i].length > 40) {
-            console.log("path Fix: "+ fixPath[i]);
-            fixPath[i] = fixPath[i].substring(0, 40);
-            fpath[i] = fixPath[i];
-           
-        } else {
-            fpath[i] = fixPath[i];
-        }
-    }
 
-    return fpath.join("/");
+        if ( fixPath[fixPath.length - 1].length > 40) {
+            console.log(pathD)
+            fixPath[fixPath.length - 1] = fixPath[fixPath.length - 1].substring(0, 40);
+        }
+
+    return fixPath.join("/");
 }
 
 function findEndPoints(localpath, eO) {
@@ -138,10 +155,12 @@ function writeFiletoXlsxForReferances(params, worksheet) {
         refs.forEach(function (ref, i) {
 
             worksheet.cell(counter + 2, 1).string(data.path);
-            worksheet.cell(counter + 2, 2).string(ref);
-            worksheet.cell(counter + 2, 4).number(data.bsCount);
-            worksheet.cell(counter + 2, 5).number(data.psCount);
-            worksheet.cell(counter + 2, 3).string(types[i]);
+            worksheet.cell(counter + 2, 2).string(data.typeId);
+            worksheet.cell(counter + 2, 3).string(ref);
+            worksheet.cell(counter + 2, 4).string(types[i]);
+            worksheet.cell(counter + 2, 5).number(data.bsCount);
+            worksheet.cell(counter + 2, 6).number(data.psCount);
+
 
             ++counter;
         });

@@ -4,21 +4,26 @@
   "description": "xml referance finder",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "mert.demirok",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "directory-tree": "^2.2.1",
     "excel4node": "^1.7.0",
     "express": "^4.16.4",
     "express.js": "^1.0.0",
     "fast-xml-parser": "^3.12.12",
     "formidable": "^1.2.1",
     "he": "^1.2.0",
+    "jarfile": "^2.0.0",
     "path": "^0.12.7",
     "read-excel-file": "^2.0.7",
+    "unzip": "^0.1.11",
     "utf8": "^3.0.0",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.19",
+    "xml2json": "^0.11.2"
   }
 }

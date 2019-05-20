@@ -1,13 +1,39 @@
-.header{
 
+body {
+  padding : 10px ;
+  
 }
 
 .container{
-    border: 0.1px solid;
-    padding: 5%;
-    background: #fff9e6;
+    border: 0px solid;
+    padding: 1%;
+   
 }
 
 .file-input{
     border: 0.1px solid;
 }
+.iconImage{
+    width: 129px;
+    height: 110px;
+}
+
+
+.container #exTab1 .tab-content {
+  color : white;
+  background-color: #428bca;
+  padding : 5px 15px;
+}
+
+.container #exTab2 h3 {
+  color : white;
+  background-color: #428bca;
+  padding : 5px 15px;
+}
+
+/* remove border radius for the tab */
+
+.container #exTab1 .nav-pills > li > a {
+  border-radius: 0;
+}
+
